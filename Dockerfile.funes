@@ -1,0 +1,37 @@
+# Build stage
+FROM balenalib/intel-nuc-debian:stretch-build-20190529 as build
+
+# -- Funes Proxy Cache setup -- #
+RUN apt-get update
+RUN apt-get install --no-install-recommends -yq \
+    unzip \
+    gettext-base \
+    wget \
+    build-essential \
+    libpcre3 \
+    libpcre3-dev \
+    libssl-dev
+
+RUN mkdir -p /usr/src/tmp
+WORKDIR /usr/src/tmp
+
+ENV FUNES_VERSION 0.0.11
+
+RUN wget -O funes.zip https://github.com/mirainc/funes/archive/v$FUNES_VERSION.zip
+RUN unzip funes.zip
+WORKDIR /usr/src/tmp/funes-$FUNES_VERSION
+RUN DISABLE_TRANSPARENT_PROXY=1 make install
+RUN mv build /usr/src/funes
+
+# Artifact stage
+FROM balenalib/intel-nuc-debian:stretch-run-20190529
+
+WORKDIR /usr/src/funes
+COPY --from=build /usr/src/funes .
+# Copy envsubst to avoid having to apt-get it.
+COPY --from=build /usr/bin/envsubst /usr/bin/envsubst
+
+# -- End of Funes Proxy Cache setup -- #
+
+# ENTRYPOINT ["bash", "/entrypoint.sh"]
+CMD ["bash", "/usr/src/funes/run.sh"]

@@ -1,0 +1,23 @@
+version: '3'
+volumes:
+  resin-data:
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.integration-tests
+    volumes:
+      - "./integration-tests:/integration-tests"
+      - "./screenshots:/screenshots"
+    command: "wait-for-it.sh funes:3128 -- mocha --timeout 30000 --recursive /integration-tests"
+    # command: ["sleep", "infinity"]
+    depends_on:
+      - funes
+  funes:
+    build:
+      context: .
+      dockerfile: Dockerfile.funes
+    expose:
+      - "3128"
+    volumes:
+      - 'resin-data:/data'

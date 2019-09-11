@@ -17,8 +17,8 @@ services:
     # command: ["sleep", "infinity"]
     depends_on:
       - funes
-    environment:
-      - TEST_URL=https://www.polygon.com
+    # environment:
+      # - TEST_URL=https://www.getmira.com
       # - DISABLE_PROXY=true
   funes:
     build:

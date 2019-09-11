@@ -1,21 +1,24 @@
 version: '3'
 volumes:
   resin-data:
+  resin-screenshots:
 services:
   tests:
     build:
       context: .
       dockerfile: Dockerfile.integration-tests
     volumes:
-      - "./integration-tests:/integration-tests"
-      - "./screenshots:/screenshots"
+      - 'resin-screenshots:/screenshots'
+      # ====== Uncomment for easier local dev ======
+      # - "./screenshots:/screenshots"
+      # - "./integration-tests:/integration-tests"
     command: "wait-for-it.sh funes:3128 -- mocha --timeout 30000 --recursive /integration-tests"
     # command: ["sleep", "infinity"]
     depends_on:
       - funes
     environment:
-      - TEST_URL=https://www.getmira.com
-      - DISABLE_PROXY=true
+      - TEST_URL=https://www.polygon.com
+      # - DISABLE_PROXY=true
   funes:
     build:
       context: .
@@ -24,3 +27,11 @@ services:
       - "3128"
     volumes:
       - 'resin-data:/data'
+  python:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    ports:
+      - "80:80"
+    volumes:
+      - 'resin-screenshots:/screenshots'

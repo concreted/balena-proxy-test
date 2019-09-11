@@ -14,9 +14,9 @@ before(async() => {
     '--disable-dev-shm-usage',
   ]
   if (process.env.DISABLE_PROXY !== 'true') {
-    args.push('--proxy-server=funes:3128');
-    args.push('--disable-http-cache');
-    args.push('--ignore-certificate-errors');
+    args.push('--proxy-server=funes:3128')
+    args.push('--disable-http-cache')
+    args.push('--ignore-certificate-errors')
   }
   browser = await puppeteer.launch({
     args,
@@ -43,6 +43,6 @@ describe('App', () => {
     const url = process.env.TEST_URL ? process.env.TEST_URL : 'https://webglsamples.org/aquarium/aquarium.html'
     const response = await page.goto(url)
     assert(response.ok())
-    await page.screenshot({ path: `/screenshots/app.png` })
+    await page.screenshot({ path: `/screenshots/result.png` })
   })
 })

@@ -1,7 +1,6 @@
 version: '2.1'
 volumes:
   resin-data:
-  resin-screenshots:
 services:
   tests:
     build:
@@ -9,9 +8,9 @@ services:
       dockerfile: Dockerfile.integration-tests
     restart: 'no'
     volumes:
-      - 'resin-screenshots:/screenshots'
+      - 'resin-data:/data'
       # ====== Uncomment for easier local dev ======
-      # - "./screenshots:/screenshots"
+      # - "./data:/data"
       # - "./integration-tests:/integration-tests"
     command: "wait-for-it.sh funes:3128 -- mocha --timeout 30000 --recursive /integration-tests"
     # command: ["sleep", "infinity"]
@@ -26,6 +25,8 @@ services:
       dockerfile: Dockerfile.funes
     expose:
       - "3128"
+    environment:
+      - LOG_DIR=/data
     volumes:
       - 'resin-data:/data'
   python:
@@ -35,4 +36,4 @@ services:
     ports:
       - "80:80"
     volumes:
-      - 'resin-screenshots:/screenshots'
+      - 'resin-data:/data'

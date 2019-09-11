@@ -43,6 +43,6 @@ describe('App', () => {
     const url = process.env.TEST_URL ? process.env.TEST_URL : 'https://webglsamples.org/aquarium/aquarium.html'
     const response = await page.goto(url)
     assert(response.ok())
-    await page.screenshot({ path: `/screenshots/result.png` })
+    await page.screenshot({ path: `/data/result.png` })
   })
 })

@@ -5,18 +5,21 @@ let browser
 let page
 
 before(async() => {
+  const args = [
+    // Required for Docker version of Puppeteer
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    // This will write shared memory files into /tmp instead of /dev/shm,
+    // because Docker’s default for /dev/shm is 64MB
+    '--disable-dev-shm-usage',
+  ]
+  if (process.env.DISABLE_PROXY !== 'true') {
+    args.push('--proxy-server=funes:3128');
+    args.push('--disable-http-cache');
+    args.push('--ignore-certificate-errors');
+  }
   browser = await puppeteer.launch({
-    args: [
-      // Required for Docker version of Puppeteer
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      // This will write shared memory files into /tmp instead of /dev/shm,
-      // because Docker’s default for /dev/shm is 64MB
-      '--disable-dev-shm-usage',
-      '--disable-http-cache',
-      '--ignore-certificate-errors',
-      '--proxy-server=funes:3128'
-    ]
+    args,
   })
 
   const browserVersion = await browser.version()
@@ -37,7 +40,8 @@ after(async() => {
 
 describe('App', () => {
   it('renders', async() => {
-    const response = await page.goto('https://webglsamples.org/aquarium/aquarium.html')
+    const url = process.env.TEST_URL ? process.env.TEST_URL : 'https://webglsamples.org/aquarium/aquarium.html'
+    const response = await page.goto(url)
     assert(response.ok())
     await page.screenshot({ path: `/screenshots/app.png` })
   })

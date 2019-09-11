@@ -1,3 +1,3 @@
 set -e
-cd /screenshot
+cd /data
 python -m http.server 80

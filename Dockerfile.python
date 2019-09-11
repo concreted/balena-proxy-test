@@ -1,5 +1,9 @@
-FROM python:latest
+FROM python:3.6-alpine
 WORKDIR /usr/src/app
+
+RUN apk add --no-cache bash
+
 COPY start.sh ./start.sh
 EXPOSE 80
+
 CMD ["bash", "start.sh"]
